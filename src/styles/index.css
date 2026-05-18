@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --cream: #FAF8F4;
+    --charcoal: #1C1C1E;
+    --red-brand: #C0392B;
+    --red-muted: #E8D5D3;
+    --gold-brand: #B8860B;
+    --gold-light: #F5EDD6;
+    --warm-gray: #8A8680;
+    --border-color: #E8E4DE;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--cream);
+    color: var(--charcoal);
+    overflow-x: hidden;
+  }
+}
