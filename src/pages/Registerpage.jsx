@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff } from 'lucide-react'
-import { useAuth } from '../../context/AuthContext.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 
 const ROLES = [
   { key: 'student', icon: '🎓', label: 'Student', desc: 'I want to learn German' },
