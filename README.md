@@ -4,7 +4,7 @@ Modern German learning ecosystem built with React + Vite + TailwindCSS + Framer 
 
 ## Tech Stack
 
-- **React 18** + JSX (no TypeScript)
+- React
 - **Vite** — dev server and bundler
 - **TailwindCSS** — utility-first styling
 - **Framer Motion** — animations
