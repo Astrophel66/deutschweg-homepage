@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 
+// Role options shown as cards — only student and teacher allowed publicly
 const ROLES = [
   { key: 'student', icon: '🎓', label: 'Student', desc: 'I want to learn German' },
   { key: 'teacher', icon: '👩‍🏫', label: 'Teacher', desc: 'I want to teach German' },
@@ -11,20 +12,29 @@ const ROLES = [
 
 export default function RegisterPage() {
   const navigate = useNavigate()
+
+  // register and loading come from AuthContext
+  // register() calls POST /api/auth/register/ and returns { success, error }
   const { register, loading } = useAuth()
 
+  // role defaults to student — user can switch via the card buttons
   const [role, setRole] = useState('student')
-  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '' })
-  const [showPw, setShowPw] = useState(false)
-  const [errors, setErrors] = useState({})
-  const [apiError, setApiError] = useState('')
 
+  // controlled form state — firstName + lastName get combined into full_name before sending
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '' })
+
+  const [showPw, setShowPw] = useState(false)
+  const [errors, setErrors] = useState({})   // field-level validation errors
+  const [apiError, setApiError] = useState('') // error returned from backend
+
+  // Update form field and clear its error on every keystroke
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
     setErrors(prev => ({ ...prev, [e.target.name]: '' }))
     setApiError('')
   }
 
+  // Client-side validation before hitting the API
   function validate() {
     const errs = {}
     if (!form.firstName.trim()) errs.firstName = 'Required'
@@ -37,12 +47,18 @@ export default function RegisterPage() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+
+    // Stop early if client-side validation fails
     const errs = validate()
     if (Object.keys(errs).length) { setErrors(errs); return }
+
+    // Call register() from AuthContext — it handles the API call
     const result = await register({ ...form, role })
+
     if (result.success) {
-      // TODO: redirect based on role
-      navigate(role === 'teacher' ? '/teacher/dashboard' : '/student/dashboard')
+      // Don't go to dashboard — user must verify email first
+      // /check-email page tells them to check their inbox
+      navigate('/check-email')
     } else {
       setApiError(result.error || 'Something went wrong. Try again.')
     }
@@ -56,15 +72,14 @@ export default function RegisterPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
-        {/* Logo */}
+        {/* Logo — links back to landing page */}
         <Link to="/" className="block text-center font-display text-2xl font-black text-[var(--charcoal)] mb-8">
           Deutsch<span className="text-[var(--red-brand)]">Weg</span>
         </Link>
 
-        {/* Card */}
         <div className="bg-white border border-[var(--border-color)] rounded-2xl p-8">
 
-          {/* Tab-style header */}
+          {/* Sign in / Create account tab switcher */}
           <div className="flex bg-[var(--cream)] rounded-xl p-1 mb-6">
             <Link
               to="/login"
@@ -77,7 +92,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Role selector */}
+          {/* Role selector — sets role state, sent to backend on submit */}
           <p className="text-xs font-semibold text-[var(--charcoal)] tracking-wide mb-2">I want to join as</p>
           <div className="grid grid-cols-2 gap-2 mb-5">
             {ROLES.map(r => (
@@ -98,7 +113,7 @@ export default function RegisterPage() {
             ))}
           </div>
 
-          {/* API error */}
+          {/* API-level error (e.g. email already exists) */}
           {apiError && (
             <div className="bg-[var(--red-muted)] text-[var(--red-brand)] text-xs font-medium px-4 py-2.5 rounded-xl mb-4">
               {apiError}
@@ -106,7 +121,8 @@ export default function RegisterPage() {
           )}
 
           <form onSubmit={handleSubmit} noValidate>
-            {/* Name row */}
+
+            {/* First + Last name in a 2-col grid */}
             <div className="grid grid-cols-2 gap-3 mb-4">
               <Field label="First name" error={errors.firstName}>
                 <input
@@ -132,7 +148,6 @@ export default function RegisterPage() {
               </Field>
             </div>
 
-            {/* Email */}
             <Field label="Email" error={errors.email}>
               <input
                 type="email"
@@ -145,7 +160,7 @@ export default function RegisterPage() {
               />
             </Field>
 
-            {/* Password */}
+            {/* Password with show/hide toggle */}
             <Field label="Password" error={errors.password}>
               <div className="relative">
                 <input
@@ -168,6 +183,7 @@ export default function RegisterPage() {
               </div>
             </Field>
 
+            {/* Submit — disabled while API call is in flight */}
             <button
               type="submit"
               disabled={loading}
@@ -179,7 +195,7 @@ export default function RegisterPage() {
 
           <Divider />
 
-          {/* Google */}
+          {/* Google OAuth — not wired yet */}
           <button
             type="button"
             className="w-full flex items-center justify-center gap-3 py-2.5 border border-[var(--border-color)] rounded-xl text-sm font-medium text-[var(--charcoal)] bg-white hover:border-[var(--charcoal)] transition-all"
