@@ -12,6 +12,9 @@ import VerifyEmailPage from "./pages/VerifyEmailPage.jsx"
 import TeacherDashboard from "./pages/teacher/TeacherDashboard.jsx"
 import TeacherProfilePage from "./pages/teacher/TeacherProfilePage.jsx"
 
+import StudentDashboard from "./pages/student/StudentDashboard.jsx"
+import StudentProfilePage from "./pages/student/StudentProfilePage.jsx"
+
 import ProtectedRoute from "./components/shared/ProtectedRoute.jsx"
 
 export default function App() {
@@ -27,7 +30,7 @@ export default function App() {
         <Route path="/check-email" element={<CheckEmailPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
 
-        {/* Teacher routes — only accessible by teachers */}
+        {/* Teacher routes */}
         <Route path="/teacher/dashboard" element={
           <ProtectedRoute allowedRoles={['teacher']}>
             <TeacherDashboard />
@@ -36,6 +39,18 @@ export default function App() {
         <Route path="/teacher/profile" element={
           <ProtectedRoute allowedRoles={['teacher']}>
             <TeacherProfilePage />
+          </ProtectedRoute>
+        } />
+
+        {/* Student routes */}
+        <Route path="/student/dashboard" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/student/profile" element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentProfilePage />
           </ProtectedRoute>
         } />
       </Routes>
