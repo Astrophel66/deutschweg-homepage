@@ -15,6 +15,9 @@ import TeacherProfilePage from "./pages/teacher/TeacherProfilePage.jsx"
 import StudentDashboard from "./pages/student/StudentDashboard.jsx"
 import StudentProfilePage from "./pages/student/StudentProfilePage.jsx"
 
+import ResourcesPage from "./pages/resources/ResourcesPage.jsx"
+import UploadResourcePage from "./pages/resources/UploadResourcePage.jsx"
+
 import ProtectedRoute from "./components/shared/ProtectedRoute.jsx"
 
 export default function App() {
@@ -51,6 +54,18 @@ export default function App() {
         <Route path="/student/profile" element={
           <ProtectedRoute allowedRoles={['student']}>
             <StudentProfilePage />
+          </ProtectedRoute>
+        } />
+
+        {/* Resource routes — accessible by all authenticated users */}
+        <Route path="/resources" element={
+          <ProtectedRoute allowedRoles={['student', 'teacher', 'admin']}>
+            <ResourcesPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/resources/upload" element={
+          <ProtectedRoute allowedRoles={['teacher', 'admin']}>
+            <UploadResourcePage />
           </ProtectedRoute>
         } />
       </Routes>

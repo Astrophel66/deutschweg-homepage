@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -13,12 +15,23 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const links = [
+  const publicLinks = [
     { name: 'Home', path: '/' },
     { name: 'Teachers', path: '/#teachers' },
     { name: 'Courses', path: '/#courses' },
-    { name: 'Resources', path: '/#resources' }
   ]
+
+  // Dashboard link depends on role
+  function getDashboardPath() {
+    if (user?.role === 'teacher') return '/teacher/dashboard'
+    if (user?.role === 'admin') return '/admin/dashboard'
+    return '/student/dashboard'
+  }
+
+  function handleLogout() {
+    logout()
+    navigate('/')
+  }
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -26,7 +39,7 @@ export default function Navbar() {
         ? 'backdrop-blur-xl bg-[var(--cream)]/85 border-b border-[var(--border-color)] shadow-sm'
         : 'bg-transparent'
     }`}>
-      
+
       <div className="max-w-5xl mx-auto px-6 flex items-center justify-between h-16">
 
         {/* Logo */}
@@ -39,7 +52,7 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <ul className="hidden md:flex gap-8 list-none">
-          {links.map(link => (
+          {publicLinks.map(link => (
             <li key={link.name}>
               <button
                 onClick={() => navigate(link.path)}
@@ -49,25 +62,40 @@ export default function Navbar() {
               </button>
             </li>
           ))}
+          {/* Resources — only for logged in users */}
+          {user && (
+            <li>
+              <button
+                onClick={() => navigate('/resources')}
+                className="text-sm font-medium text-[var(--warm-gray)] hover:text-[var(--charcoal)] transition-colors"
+              >
+                Resources
+              </button>
+            </li>
+          )}
         </ul>
 
         {/* Desktop actions */}
         <div className="hidden md:flex gap-3 items-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/login')}
-          >
-            Login
-          </Button>
-
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => navigate('/register')}
-          >
-            Get Started
-          </Button>
+          {user ? (
+            <>
+              <Button variant="ghost" size="sm" onClick={() => navigate(getDashboardPath())}>
+                Dashboard
+              </Button>
+              <Button variant="primary" size="sm" onClick={handleLogout}>
+                Sign out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/login')}>
+                Login
+              </Button>
+              <Button variant="primary" size="sm" onClick={() => navigate('/register')}>
+                Get Started
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -86,40 +114,44 @@ export default function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-[var(--cream)] border-b border-[var(--border-color)] px-6 pb-6">
-
-          {links.map(link => (
+          {publicLinks.map(link => (
             <button
               key={link.name}
-              onClick={() => {
-                navigate(link.path)
-                setMenuOpen(false)
-              }}
+              onClick={() => { navigate(link.path); setMenuOpen(false) }}
               className="block w-full text-left py-3 text-sm font-medium text-[var(--warm-gray)] border-b border-[var(--border-color)] last:border-0"
             >
               {link.name}
             </button>
           ))}
-
+          {user && (
+            <button
+              onClick={() => { navigate('/resources'); setMenuOpen(false) }}
+              className="block w-full text-left py-3 text-sm font-medium text-[var(--warm-gray)] border-b border-[var(--border-color)]"
+            >
+              Resources
+            </button>
+          )}
           <div className="flex gap-3 mt-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              fullWidth
-              onClick={() => navigate('/login')}
-            >
-              Login
-            </Button>
-
-            <Button
-              variant="primary"
-              size="sm"
-              fullWidth
-              onClick={() => navigate('/register')}
-            >
-              Get Started
-            </Button>
+            {user ? (
+              <>
+                <Button variant="ghost" size="sm" fullWidth onClick={() => navigate(getDashboardPath())}>
+                  Dashboard
+                </Button>
+                <Button variant="primary" size="sm" fullWidth onClick={handleLogout}>
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" fullWidth onClick={() => navigate('/login')}>
+                  Login
+                </Button>
+                <Button variant="primary" size="sm" fullWidth onClick={() => navigate('/register')}>
+                  Get Started
+                </Button>
+              </>
+            )}
           </div>
-
         </div>
       )}
 
