@@ -18,7 +18,15 @@ import StudentProfilePage from "./pages/student/StudentProfilePage.jsx"
 import ResourcesPage from "./pages/resources/ResourcesPage.jsx"
 import UploadResourcePage from "./pages/resources/UploadResourcePage.jsx"
 
+import CoursesPage from "./pages/courses/CoursesPage.jsx"
+import CourseDetailPage from "./pages/courses/CourseDetailPage.jsx"
+import CreateCoursePage from "./pages/courses/CreateCoursePage.jsx"
+import AddLessonPage from "./pages/courses/AddLessonPage.jsx"
+
 import ProtectedRoute from "./components/shared/ProtectedRoute.jsx"
+
+import TeachersPage from "./pages/TeachersPage.jsx"
+
 
 export default function App() {
   return (
@@ -33,6 +41,10 @@ export default function App() {
         <Route path="/check-email" element={<CheckEmailPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
 
+        {/* Public course listing */}
+        <Route path="/courses" element={<CoursesPage />} />
+        <Route path="/courses/:id" element={<CourseDetailPage />} />
+
         {/* Teacher routes */}
         <Route path="/teacher/dashboard" element={
           <ProtectedRoute allowedRoles={['teacher']}>
@@ -44,6 +56,18 @@ export default function App() {
             <TeacherProfilePage />
           </ProtectedRoute>
         } />
+        <Route path="/courses/create" element={
+          <ProtectedRoute allowedRoles={['teacher']}>
+            <CreateCoursePage />
+          </ProtectedRoute>
+        } />
+        <Route path="/courses/:id/lessons/add" element={
+          <ProtectedRoute allowedRoles={['teacher']}>
+            <AddLessonPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/teachers" element={<TeachersPage />} />
+
 
         {/* Student routes */}
         <Route path="/student/dashboard" element={
@@ -57,7 +81,7 @@ export default function App() {
           </ProtectedRoute>
         } />
 
-        {/* Resource routes — accessible by all authenticated users */}
+        {/* Resource routes */}
         <Route path="/resources" element={
           <ProtectedRoute allowedRoles={['student', 'teacher', 'admin']}>
             <ResourcesPage />

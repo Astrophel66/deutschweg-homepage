@@ -16,10 +16,11 @@ export default function Navbar() {
   }, [])
 
   const publicLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Teachers', path: '/#teachers' },
-    { name: 'Courses', path: '/#courses' },
-  ]
+  { name: 'Home', path: '/' },
+  { name: 'Teachers', path: '/teachers' },
+  { name: 'Courses', path: '/courses' },  // change this
+]
+
 
   // Dashboard link depends on role
   function getDashboardPath() {
