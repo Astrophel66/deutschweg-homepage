@@ -27,6 +27,10 @@ import ProtectedRoute from "./components/shared/ProtectedRoute.jsx"
 
 import TeachersPage from "./pages/TeachersPage.jsx"
 
+import AvailabilityPage from "./pages/scheduling/AvailabilityPage.jsx"
+import BookingsPage from "./pages/scheduling/BookingsPage.jsx"
+import BookClassPage from "./pages/scheduling/BookClassPage.jsx"
+
 
 export default function App() {
   return (
@@ -92,7 +96,29 @@ export default function App() {
             <UploadResourcePage />
           </ProtectedRoute>
         } />
+
+// in Routes:
+<Route path="/scheduling/availability" element={
+  <ProtectedRoute allowedRoles={['teacher']}>
+    <AvailabilityPage />
+  </ProtectedRoute>
+} />
+<Route path="/scheduling/bookings" element={
+  <ProtectedRoute allowedRoles={['student', 'teacher']}>
+    <BookingsPage />
+  </ProtectedRoute>
+} />
+<Route path="/scheduling/book" element={
+  <ProtectedRoute allowedRoles={['student']}>
+    <BookClassPage />
+  </ProtectedRoute>
+} />
+
+
       </Routes>
+
+
+
 
       <Footer />
     </>

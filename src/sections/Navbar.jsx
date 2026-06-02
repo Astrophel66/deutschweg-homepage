@@ -48,7 +48,7 @@ export default function Navbar() {
           onClick={() => navigate('/')}
           className="font-display text-2xl font-black text-[var(--charcoal)] tracking-tight cursor-pointer"
         >
-          Deutsch<span className="text-[var(--red-brand)]">Weg</span>
+          Sprach<span className="text-[var(--red-brand)]">io</span>
         </div>
 
         {/* Desktop nav */}

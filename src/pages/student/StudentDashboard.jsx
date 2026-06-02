@@ -92,22 +92,66 @@ export default function StudentDashboard() {
           </div>
         )}
 
-        {/* Placeholder cards for future features */}
+        {/* Dashboard grid */}
         <div className="grid grid-cols-2 gap-4">
-          {[
-            { label: 'My Courses', value: '0', icon: '📚' },
-            { label: 'Upcoming Classes', value: '0', icon: '📅' },
-            { label: 'Achievements', value: '0', icon: '🏆' },
-            { label: 'CEFR Progress', value: profile?.cefr_level || '—', icon: '📈' },
-          ].map(card => (
-            <div key={card.label} className="bg-white border border-[var(--border-color)] rounded-2xl p-5">
-              <div className="text-2xl mb-2">{card.icon}</div>
-              <div className="text-xl font-black text-[var(--charcoal)]">{card.value}</div>
-              <div className="text-xs text-[var(--warm-gray)] mt-1">{card.label}</div>
-            </div>
-          ))}
-        </div>
 
+          {/* Book a Class */}
+          <Link
+            to="/scheduling/book"
+            className="bg-white border border-[var(--border-color)] rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition-all"
+          >
+            <div className="text-2xl mb-2">📅</div>
+            <div className="text-sm font-semibold text-[var(--charcoal)]">Book a Class</div>
+            <div className="text-xs text-[var(--warm-gray)] mt-1">Schedule with a teacher</div>
+          </Link>
+
+          {/* My Bookings */}
+          <Link
+            to="/scheduling/bookings"
+            className="bg-white border border-[var(--border-color)] rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition-all"
+          >
+            <div className="text-2xl mb-2">📋</div>
+            <div className="text-sm font-semibold text-[var(--charcoal)]">My Bookings</div>
+            <div className="text-xs text-[var(--warm-gray)] mt-1">View scheduled classes</div>
+          </Link>
+
+          {/* My Courses */}
+          <Link
+            to="/courses"
+            className="bg-white border border-[var(--border-color)] rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition-all"
+          >
+            <div className="text-2xl mb-2">📚</div>
+            <div className="text-sm font-semibold text-[var(--charcoal)]">My Courses</div>
+            <div className="text-xs text-[var(--warm-gray)] mt-1">Browse and enroll</div>
+          </Link>
+
+          {/* Resources */}
+          <Link
+            to="/resources"
+            className="bg-white border border-[var(--border-color)] rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition-all"
+          >
+            <div className="text-2xl mb-2">📖</div>
+            <div className="text-sm font-semibold text-[var(--charcoal)]">Resources</div>
+            <div className="text-xs text-[var(--warm-gray)] mt-1">Learning materials</div>
+          </Link>
+
+          {/* CEFR Progress */}
+          <div className="bg-white border border-[var(--border-color)] rounded-2xl p-5">
+            <div className="text-2xl mb-2">📈</div>
+            <div className="text-xl font-black text-[var(--charcoal)]">
+              {profile?.cefr_level || '—'}
+            </div>
+            <div className="text-xs text-[var(--warm-gray)] mt-1">CEFR Progress</div>
+          </div>
+
+          {/* Achievements */}
+          <div className="bg-white border border-[var(--border-color)] rounded-2xl p-5">
+            <div className="text-2xl mb-2">🏆</div>
+            <div className="text-xl font-black text-[var(--charcoal)]">0</div>
+            <div className="text-xs text-[var(--warm-gray)] mt-1">Achievements</div>
+          </div>
+
+        </div>
       </div>
     </div>
   )

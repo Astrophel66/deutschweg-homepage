@@ -113,6 +113,26 @@ export default function TeacherDashboard() {
             </div>
           ))}
         </div>
+          {/* Quick links */}
+<div className="grid grid-cols-2 gap-4 mt-4">
+  <Link
+    to="/scheduling/availability"
+    className="bg-white border border-[var(--border-color)] rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition-all"
+  >
+    <div className="text-2xl mb-2">📅</div>
+    <div className="text-sm font-semibold text-[var(--charcoal)]">My Availability</div>
+    <div className="text-xs text-[var(--warm-gray)] mt-1">Set your time slots</div>
+  </Link>
+  <Link
+    to="/scheduling/bookings"
+    className="bg-white border border-[var(--border-color)] rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition-all"
+  >
+    <div className="text-2xl mb-2">📋</div>
+    <div className="text-sm font-semibold text-[var(--charcoal)]">Bookings</div>
+    <div className="text-xs text-[var(--warm-gray)] mt-1">Manage requests</div>
+  </Link>
+</div>
+
 
       </div>
     </div>
