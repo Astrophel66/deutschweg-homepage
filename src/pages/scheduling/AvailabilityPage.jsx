@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import api from '../../api/axios'
 
+import DashboardLayout from '../../components/layout/DashboardLayout'
+
 const DAYS = [
   { value: 0, label: 'Monday' },
   { value: 1, label: 'Tuesday' },

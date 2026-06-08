@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import api from '../../api/axios'
 
+import DashboardLayout from '../../components/layout/DashboardLayout'
+
 export default function BookingsPage() {
   const { user } = useAuth()
   const [bookings, setBookings] = useState([])

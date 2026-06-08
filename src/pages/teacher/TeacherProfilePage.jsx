@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import api from '../../api/axios'
 
+
+import DashboardLayout from '../../components/layout/DashboardLayout'
+// wrap return with <DashboardLayout> instead of outer div
+
 export default function TeacherProfilePage() {
   const navigate = useNavigate()
 

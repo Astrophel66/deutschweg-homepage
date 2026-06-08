@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import api from '../../api/axios'
+import DashboardLayout from '../../components/layout/DashboardLayout'
 
 export default function AddLessonPage() {
   const { id } = useParams()

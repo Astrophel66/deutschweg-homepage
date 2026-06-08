@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import DashboardLayout from '../../components/layout/DashboardLayout'
 import api from '../../api/axios'
 
 const RESOURCE_TYPES = [
@@ -13,134 +14,266 @@ const RESOURCE_TYPES = [
   { key: 'practice_test', label: 'Practice Tests' },
 ]
 
-const TYPE_ICONS = {
-  pdf: '📄',
-  text: '📝',
-  audio: '🎧',
-  image: '🖼️',
-  vocabulary: '📚',
-  practice_test: '✏️',
+const CEFR_LEVELS = ['', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+
+const TYPE_CONFIG = {
+  pdf: { icon: '📄', color: 'bg-red-50', text: 'text-red-600', border: 'border-red-100' },
+  audio: { icon: '🎧', color: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-100' },
+  image: { icon: '🖼️', color: 'bg-green-50', text: 'text-green-600', border: 'border-green-100' },
+  text: { icon: '📝', color: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-100' },
+  vocabulary: { icon: '📚', color: 'bg-teal-50', text: 'text-teal-600', border: 'border-teal-100' },
+  practice_test: { icon: '✏️', color: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-100' },
 }
 
 export default function ResourcesPage() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [resources, setResources] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeType, setActiveType] = useState('')
+  const [activeLevel, setActiveLevel] = useState('')
+  const [search, setSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('')
 
   useEffect(() => {
     fetchResources()
-  }, [activeType])
+  }, [activeType, activeLevel, search])
 
   function fetchResources() {
     setLoading(true)
-    const params = activeType ? `?type=${activeType}` : ''
-    api.get(`/resources/${params}`)
+    const params = new URLSearchParams()
+    if (activeType) params.append('type', activeType)
+    if (activeLevel) params.append('cefr_level', activeLevel)
+    if (search) params.append('search', search)
+
+    api.get(`/resources/?${params.toString()}`)
       .then(res => setResources(res.data))
       .catch(() => setResources([]))
       .finally(() => setLoading(false))
   }
 
+  function handleSearch(e) {
+    e.preventDefault()
+    setSearch(searchInput)
+  }
+
   const isTeacherOrAdmin = user?.role === 'teacher' || user?.role === 'admin'
 
+  // Separate free and premium
+  const freeResources = resources.filter(r => !r.is_premium)
+  const premiumResources = resources.filter(r => r.is_premium)
+
   return (
-    <div className="min-h-screen bg-[var(--cream)] px-4 py-12">
-      <div className="max-w-4xl mx-auto">
+    <DashboardLayout>
+      <div className="space-y-6">
 
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center">
           <div>
             <h1 className="font-display text-2xl font-black text-[var(--charcoal)]">
-              Learning Resources
+              Resources
             </h1>
             <p className="text-sm text-[var(--warm-gray)] mt-1">
-              Browse all learning materials
+              {resources.length} learning materials available
             </p>
           </div>
-          {/* Only teachers and admins can upload */}
           {isTeacherOrAdmin && (
-            <Link
-              to="/resources/upload"
+            <button
+              onClick={() => navigate('/resources/upload')}
               className="px-5 py-2.5 bg-[var(--charcoal)] text-white rounded-xl text-sm font-semibold hover:bg-zinc-800 transition-all"
             >
               + Upload
-            </Link>
+            </button>
           )}
         </div>
 
-        {/* Filter tabs */}
-        <div className="flex gap-2 flex-wrap mb-8">
-          {RESOURCE_TYPES.map(type => (
+        {/* Search + filters */}
+        <div className="bg-white border border-[var(--border-color)] rounded-2xl p-4 space-y-4">
+
+          {/* Search bar */}
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <div className="flex-1 flex items-center gap-2 bg-[var(--cream)] border border-[var(--border-color)] rounded-xl px-3 py-2.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--warm-gray)] shrink-0">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Search resources..."
+                value={searchInput}
+                onChange={e => setSearchInput(e.target.value)}
+                className="bg-transparent text-sm text-[var(--charcoal)] placeholder:text-[var(--warm-gray)] outline-none w-full"
+              />
+            </div>
             <button
-              key={type.key}
-              onClick={() => setActiveType(type.key)}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all ${
-                activeType === type.key
-                  ? 'bg-[var(--charcoal)] text-white border-[var(--charcoal)]'
-                  : 'bg-white text-[var(--warm-gray)] border-[var(--border-color)] hover:border-zinc-400'
-              }`}
+              type="submit"
+              className="px-4 py-2.5 bg-[var(--charcoal)] text-white rounded-xl text-sm font-semibold hover:bg-zinc-800 transition-all"
             >
-              {type.label}
+              Search
             </button>
-          ))}
+            {search && (
+              <button
+                type="button"
+                onClick={() => { setSearch(''); setSearchInput('') }}
+                className="px-4 py-2.5 bg-[var(--cream)] border border-[var(--border-color)] rounded-xl text-sm font-medium text-[var(--warm-gray)] hover:text-[var(--charcoal)] transition-all"
+              >
+                Clear
+              </button>
+            )}
+          </form>
+
+          {/* Type filter */}
+          <div className="flex gap-2 flex-wrap">
+            {RESOURCE_TYPES.map(type => (
+              <button
+                key={type.key}
+                onClick={() => setActiveType(type.key)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                  activeType === type.key
+                    ? 'bg-[var(--charcoal)] text-white border-[var(--charcoal)]'
+                    : 'bg-white text-[var(--warm-gray)] border-[var(--border-color)] hover:border-zinc-400'
+                }`}
+              >
+                {type.label}
+              </button>
+            ))}
+          </div>
+
+          {/* CEFR filter */}
+          <div className="flex gap-2 flex-wrap">
+            {CEFR_LEVELS.map(level => (
+              <button
+                key={level}
+                onClick={() => setActiveLevel(level)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                  activeLevel === level
+                    ? 'bg-[var(--charcoal)] text-white border-[var(--charcoal)]'
+                    : 'bg-white text-[var(--warm-gray)] border-[var(--border-color)] hover:border-zinc-400'
+                }`}
+              >
+                {level || 'All Levels'}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Loading */}
         {loading && (
-          <p className="text-sm text-[var(--warm-gray)]">Loading...</p>
+          <div className="flex items-center justify-center h-40">
+            <p className="text-sm text-[var(--warm-gray)]">Loading...</p>
+          </div>
         )}
 
         {/* Empty state */}
         {!loading && resources.length === 0 && (
-          <div className="text-center py-16">
+          <div className="text-center py-16 bg-white border border-[var(--border-color)] rounded-2xl">
             <div className="text-4xl mb-4">📭</div>
             <p className="text-sm text-[var(--warm-gray)]">No resources found.</p>
-          </div>
-        )}
-
-        {/* Resource grid */}
-        {!loading && resources.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {resources.map(r => (
-              <div
-                key={r.id}
-                className="bg-white border border-[var(--border-color)] rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition-all duration-200"
+            {search && (
+              <button
+                onClick={() => { setSearch(''); setSearchInput('') }}
+                className="mt-3 text-xs font-semibold text-[var(--charcoal)] hover:underline"
               >
-                <div className="flex items-start justify-between mb-3">
-                  <span className="text-2xl">{TYPE_ICONS[r.resource_type] || '📁'}</span>
-                  {r.cefr_level && (
-                    <span className="text-xs font-semibold bg-[var(--cream)] px-2 py-1 rounded-lg">
-                      {r.cefr_level}
-                    </span>
-                  )}
-                </div>
-                <h3 className="font-semibold text-[var(--charcoal)] mb-1 text-sm">{r.title}</h3>
-                <p className="text-xs text-[var(--warm-gray)] mb-3 line-clamp-2">
-                  {r.description || 'No description'}
-                </p>
-                <p className="text-xs text-[var(--warm-gray)] mb-4">
-                  By <strong>{r.uploaded_by_name}</strong>
-                </p>
-
-                {/* File link or text preview */}
-                {r.file_url ? (
-                  <a
-                    href={r.file_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-center py-2 bg-[var(--cream)] border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--charcoal)] hover:border-[var(--charcoal)] transition-all"
-                  >
-                    Open {r.resource_type.toUpperCase()}
-                  </a>
-                ) : (
-                  <div className="py-2 px-3 bg-[var(--cream)] rounded-xl text-xs text-[var(--warm-gray)] line-clamp-3">
-                    {r.text_content || '—'}
-                  </div>
-                )}
-              </div>
-            ))}
+                Clear search
+              </button>
+            )}
           </div>
         )}
+
+        {/* Free resources */}
+        {!loading && freeResources.length > 0 && (
+          <div>
+            <h2 className="text-sm font-semibold text-[var(--warm-gray)] uppercase tracking-wider mb-3">
+              Free Resources ({freeResources.length})
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {freeResources.map(r => (
+                <ResourceCard key={r.id} resource={r} onClick={() => navigate(`/resources/${r.id}`)} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Premium resources */}
+        {!loading && premiumResources.length > 0 && (
+          <div>
+            <h2 className="text-sm font-semibold text-[var(--warm-gray)] uppercase tracking-wider mb-3">
+              Premium Resources ({premiumResources.length})
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {premiumResources.map(r => (
+                <ResourceCard key={r.id} resource={r} onClick={() => navigate(`/resources/${r.id}`)} />
+              ))}
+            </div>
+          </div>
+        )}
+
+      </div>
+    </DashboardLayout>
+  )
+}
+
+// ── Resource Card ─────────────────────────────────────────────────────────────
+function ResourceCard({ resource, onClick }) {
+  const config = TYPE_CONFIG[resource.resource_type] || {
+    icon: '📁', color: 'bg-zinc-50', text: 'text-zinc-500', border: 'border-zinc-100'
+  }
+  const hasAccess = resource.has_access
+  const isPremium = resource.is_premium
+
+  return (
+    <div
+      onClick={onClick}
+      className="bg-white border border-[var(--border-color)] rounded-2xl overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all duration-200 cursor-pointer"
+    >
+      {/* Colored header */}
+      <div className={`${config.color} ${config.border} border-b px-5 pt-5 pb-4 flex items-start justify-between`}>
+        <span className="text-3xl">{config.icon}</span>
+        <div className="flex items-center gap-1.5">
+          {resource.cefr_level && (
+            <span className="text-xs font-semibold bg-white/70 px-2 py-0.5 rounded-lg">
+              {resource.cefr_level}
+            </span>
+          )}
+          {isPremium ? (
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-lg ${
+              hasAccess ? 'bg-green-100 text-green-700' : 'bg-zinc-100 text-zinc-500'
+            }`}>
+              {hasAccess ? '🔓' : '🔒'}
+            </span>
+          ) : (
+            <span className="text-xs font-semibold bg-green-100 text-green-700 px-2 py-0.5 rounded-lg">
+              Free
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Card body */}
+      <div className="p-5">
+        <h3 className="font-semibold text-[var(--charcoal)] text-sm mb-1 line-clamp-1">
+          {resource.title}
+        </h3>
+        <p className="text-xs text-[var(--warm-gray)] mb-2 line-clamp-2">
+          {resource.description || 'No description'}
+        </p>
+        <p className="text-xs text-[var(--warm-gray)]">
+          By <strong>{resource.uploaded_by_name}</strong>
+        </p>
+
+        {/* Preview text for text resources */}
+        {resource.content?.type === 'preview' && resource.content?.text && (
+          <p className="text-xs text-[var(--warm-gray)] mt-2 line-clamp-2 italic">
+            "{resource.content.text.slice(0, 80)}..."
+          </p>
+        )}
+
+        {/* Action */}
+        <div className="mt-4">
+          <span className={`text-xs font-semibold px-3 py-1.5 rounded-xl border transition-all ${config.color} ${config.text} ${config.border}`}>
+            {isPremium && !hasAccess ? 'Preview →' : 'Open →'}
+          </span>
+        </div>
       </div>
     </div>
   )

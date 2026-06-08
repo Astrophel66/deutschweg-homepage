@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import api from '../../api/axios'
 
+import DashboardLayout from '../../components/layout/DashboardLayout'
+
 const CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 
 export default function StudentProfilePage() {
