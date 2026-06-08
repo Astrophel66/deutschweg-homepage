@@ -31,6 +31,14 @@ import BookClassPage from "./pages/scheduling/BookClassPage.jsx"
 
 import ProtectedRoute from "./components/shared/ProtectedRoute.jsx"
 
+
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx"
+import AdminUsers from "./pages/admin/AdminUsers.jsx"
+import AdminTeachers from "./pages/admin/AdminTeachers.jsx"
+import AdminCourses from "./pages/admin/AdminCourses.jsx"
+import AdminResources from "./pages/admin/AdminResources.jsx"
+import AdminBookings from "./pages/admin/AdminBookings.jsx"
+
 // Public layout wrapper — shows Navbar + Footer
 function PublicLayout({ children }) {
   return (
@@ -117,6 +125,41 @@ export default function App() {
           <UploadResourcePage />
         </ProtectedRoute>
       } />
+
+      // in Routes — add these:
+<Route path="/admin/dashboard" element={
+  <ProtectedRoute allowedRoles={['admin']}>
+    <AdminDashboard />
+  </ProtectedRoute>
+} />
+<Route path="/admin/users" element={
+  <ProtectedRoute allowedRoles={['admin']}>
+    <AdminUsers />
+  </ProtectedRoute>
+} />
+<Route path="/admin/teachers" element={
+  <ProtectedRoute allowedRoles={['admin']}>
+    <AdminTeachers />
+  </ProtectedRoute>
+} />
+<Route path="/admin/courses" element={
+  <ProtectedRoute allowedRoles={['admin']}>
+    <AdminCourses />
+  </ProtectedRoute>
+} />
+<Route path="/admin/resources" element={
+  <ProtectedRoute allowedRoles={['admin']}>
+    <AdminResources />
+  </ProtectedRoute>
+} />
+<Route path="/admin/bookings" element={
+  <ProtectedRoute allowedRoles={['admin']}>
+    <AdminBookings />
+  </ProtectedRoute>
+} />
+
+
+
     </Routes>
   )
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../api/axios'
+import api from '../api/axios.js'
 import Avatar from '../components/ui/Avatar.jsx'
 import Button from '../components/ui/Button.jsx'
 

@@ -4,7 +4,7 @@ import SectionHeader from '../components/shared/SectionHeader.jsx'
 import Button from '../components/ui/Button.jsx'
 import Avatar from '../components/ui/Avatar.jsx'
 import { teachers as staticTeachers } from '../data/teachers.js'
-import api from '../api/axios'
+import api from '../api/axios.js'
 
 export default function Teachers() {
   const [teachers, setTeachers] = useState(staticTeachers) // start with static data
